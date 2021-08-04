@@ -1,0 +1,7 @@
+<!--
+# Build Information
+# Build Number: ${build.number}
+# Build Time: ${build.time}
+# Git Branch: ${git.branch}
+# Git URL: ${git.url}
+-->

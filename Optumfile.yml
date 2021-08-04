@@ -1,0 +1,9 @@
+apiVersion: v1
+metadata:
+  askId : UHGWM110-025429
+  caAgileId: poc
+  projectKey: com.uhc.uhcmr:ucp-plan-documents
+  projectFriendlyName: ucp-plan-documents
+  componentType: code
+  targetQG : GATE_00
+

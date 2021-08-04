@@ -1,0 +1,79 @@
+<project name="ucp-plan-documentsConfig-conf-build" basedir=".">
+	<property name="javac.encoding" value="Cp1252" />
+	<property name="src.config.dir" location="./external-conf" />
+	<property name="output.dir" value="build" />
+	<property name="build.config.dir" value="${output.dir}/config" />
+	<property name="build.config.file" value="${output.dir}/ucp-plan-documentsConfig-${project.version}.zip" />
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="src/main/webapp/WEB-INF/lib/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<echo message="&lt;!--${line.separator}# Build Information${line.separator}# Build Number: ${build.number}${line.separator}# Build Time: ${build.time}${line.separator}# Git Branch: ${git.branch}${line.separator}# Git URL: ${git.url}${line.separator}--&gt;${line.separator}" file="build_info.txt"/>
+	<echo message="&lt;!--${line.separator}# Build Information${line.separator}# Build Number: ${build.number}${line.separator}# Build Time: ${build.time}${line.separator}# Git Branch: ${git.branch}${line.separator}# Git URL: ${git.url}${line.separator}--&gt;${line.separator}"/>
+
+	<target name="build-external-config" depends="clean,copy,zip">
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.config.dir}" />
+	</target>
+
+	<target name="copy">
+		<!-- *************** Config ******************** -->
+		<!-- doing it first to make sure folder structures are created -->
+		<echo message="ucp-plan-documents-build - build config file"/>
+		<copy todir="${build.config.dir}" includeEmptyDirs="false">
+			<fileset dir="${src.config.dir}">
+				<exclude name="portal/conf/ucp-plan-documents/common/**"/>
+				<include name="portal/conf/ucp-plan-documents/*/*.xml*" />
+			</fileset>
+
+			<filterchain>
+				<concatfilter append="build_info.txt"/>
+			</filterchain>
+		</copy> 
+		
+		<copy todir="${build.config.dir}" includeEmptyDirs="false"> 
+							<fileset dir="${src.config.dir}">
+								<exclude name="portal/conf/ucp-plan-documents/common/**"/>
+							</fileset>
+				</copy>
+				<!-- merging common files -->
+					<echo message="ucp-plan-documents-build - merging common files"/>
+						<for param="dir">
+							<dirset dir="${build.config.dir}/portal/conf/ucp-plan-documents">
+								<include name="*/**"/>
+								<exclude name="common/**"/>
+								<exclude name="*/*/**"/>
+							</dirset>
+							<sequential>
+								<echo message="build xml-config for @{dir} from ${src.config.dir}/portal/conf/ucp-plan-documents/common/" />
+								<copy todir="@{dir}" includeEmptyDirs="false" >
+									<fileset dir="${src.config.dir}/portal/conf/ucp-plan-documents/common">
+										<include name="*"/>
+									</fileset>
+									<filterchain>
+										<concatfilter append="build_info.txt"/>
+									</filterchain>			
+								</copy>
+								<echo message="build config for @{dir}" />
+								<copy todir="@{dir}" includeEmptyDirs="false" >
+									<fileset dir="${src.config.dir}/portal/conf/ucp-plan-documents/common"/>			
+								</copy>
+							</sequential>
+						</for>
+		
+	</target>
+
+	<target name="zip" depends="copy">
+		<zip destfile="${build.config.file}" compress="false">
+			<fileset dir="${build.config.dir}/portal/conf/ucp-plan-documents"/>
+		</zip>
+	</target>
+</project>
+
+
+
